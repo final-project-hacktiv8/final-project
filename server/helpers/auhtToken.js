@@ -6,8 +6,6 @@ module.exports = (req, res, next) => {
         req.decode = decoded;
         next()
     } catch (err) {
-        err.statusCode = 401
-        err.message = "Token Not match"
         next(err)
     }
 }

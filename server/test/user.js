@@ -145,9 +145,61 @@ describe('User Test', function(){
                 })
                 .end(function(err,res){
                     expect(res).to.have.status(200);
-                    expect(res).to.be.an('Object')
+                    expect(res).to.be.an('Object');
+                    expect(res.body.photo_path).to.not.equal(beforeChange.data.photo_path)
+                    expect(res.body.fullname).to.equal(beforeChange.data.fullname)
+                    expect(res.body.email).to.equal(beforeChange.data.email)
+                    expect(res.body.password).to.equal(beforeChange.data.password)                    
                     done()
                 })
         })
+
+        it('Denied when token is not valid', function(done){
+            chai.request(app)
+                .post('/user/changephoto')
+                .set('token', '123123123123123')
+                .send({
+                    photo: image
+                })
+                .end(function(err,res){
+                    expect(res).to.have.status(401);
+                    expect(res).to.be.an('Object');
+                    expect(res.body).to.have.property('message');
+                    expect(res.body).to.have.property('statusCode');
+                    expect(res.body.message).includes(`Token isn't valid`)
+                    done();
+                })
+        })
+
+        it('denied when type file is not image in base64', function(done){
+            chai.request(app)
+                .post('/user/changephoto')
+                .set('token', beforeChange.token)
+                .end(function(err,res){
+                    expect(res).to.have.status(400);
+                    expect(res).to.be.an('Object');
+                    expect(res.body).to.have.property('statusCode');
+                    expect(res.body).to.have.property('message');
+                    expect(res.body.message).includes('must be encoded')
+                    done()
+                })
+        })
+
+        it('denied when type file is not image', function(done){
+            chai.request(app)
+                .post('/user/changephoto')
+                .set('token', beforeChange.token)
+                .send({
+                    image: "data:application/pdf;base64,1231241231512"
+                })
+                .end(function(err,res){
+                    expect(res).to.have.status(400);
+                    expect(res).to.be.an('Object');
+                    expect(res.body).to.have.property('statusCode');
+                    expect(res.body).to.have.property('message');
+                    done()
+                })
+        })
+
     })
 })

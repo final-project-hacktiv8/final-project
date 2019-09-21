@@ -16,7 +16,7 @@ app.use(cors())
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 
-mongoose.connect(MONGODB_URL, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true} ,function(err){
+mongoose.connect(MONGODB_URL, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false} ,function(err){
     if (err) throw Error(err)
     else {
         console.log('Connected TO DB')
@@ -41,6 +41,12 @@ app.use((err,req,res,next) => {
         if(err.code == 11000){
             statusCode = 409;
             message = 'email already used'
+        }
+    }
+    if (err.name === "JsonWebTokenError"){
+        if(err.message === 'jwt malformed'){
+            statusCode = 401
+            message = "Token isn't valid"
         }
     }
     res.status(statusCode).json({statusCode, message})

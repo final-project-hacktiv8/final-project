@@ -36,8 +36,13 @@ class UserController {
     }
 
     static changePhoto(req,res,next){
-        const { id } = req.decode
-        console.log(id)
+        const { id } = req.decode;
+        const photo_path = req.file.cloudStoragePublicUrl;
+        ModelUser.findByIdAndUpdate(id, {photo_path}, {new: true})
+        .then(data => {
+            res.status(200).send(data)
+        })
+        .catch(next)
     }
 }
 
