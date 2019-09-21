@@ -56,8 +56,9 @@ Base URL = http://locahost:3000/
   ```json
   {
   	"email": "smartcage@gmail.com",
-      "password": "V5MUfXvUrP9XItkuxzfziOqjRTqWYsqusNDUsORJ7Xqae9OrU33e2",
-      "fullname" : Smart Cage Andalanku
+    "password": "V5MUfXvUrP9XItkuxzfziOqjRTqWYsqusNDUsORJ7Xqae9OrU33e2",
+    "fullname" : "Smart Cage Andalanku",
+    "photo_path" : "gcs.studio-img.jpg"
   }
   ```
 
