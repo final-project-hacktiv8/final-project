@@ -6,14 +6,20 @@ import { Provider } from 'react-redux';
 
 import store from './src/stores'
 import Navigation from './src/navigation'
+import WelcomeScreen from './src/screens/welcomescreen'
 
 const images = [
   require('./assets/images/avatar_1x.jpg'),
   require('./assets/images/farming-01.jpg'),
-  require('./assets/images/icons8-back-to-64.png'),
+  require('./assets/images/icons8-back-50.png'),
   require('./assets/images/icons8-light-on-50.png'),
-  require('./assets/images/icons8-organic-food-32.png'),
-  require('./assets/images/icons8-thermometer-50.png')
+  require('./assets/images/icons8-mayonnaise-50.png'),
+  require('./assets/images/icons8-thermometer-50.png'),
+  require('./assets/images/farm_kit8-net.jpg'),
+  require('./assets/images/chicken.png'),
+  require('./assets/images/icons8-ellipsis-50.png'),
+  require('./assets/images/icons8-sort-right-26.png'),
+  require('./assets/images/icons8-light-off-50.png')
 ]
 
 class App extends Component {
@@ -43,7 +49,7 @@ class App extends Component {
 
     return (
       <Provider store={store}>
-        <Navigation/>
+       <Navigation/> 
       </Provider>
     )
   }
