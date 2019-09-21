@@ -19,7 +19,9 @@ const images = [
   require('./assets/images/chicken.png'),
   require('./assets/images/icons8-ellipsis-50.png'),
   require('./assets/images/icons8-sort-right-26.png'),
-  require('./assets/images/icons8-light-off-50.png')
+  require('./assets/images/icons8-light-off-50.png'),
+  require('./assets/images/icons8-light-50.png'),
+  require('./assets/images/icons8-man-feeding-duck-50.png')
 ]
 
 class App extends Component {
