@@ -7,7 +7,7 @@ import * as theme from './constats/theme'
 import WelcomeScreen from './screens/welcomescreen'
 import Register from './screens/register'
 import Dashboard from './screens/dashboard'
-import Actions from './screens/actions'
+import Logs from './screens/log'
 
 let SlideFromRight = (index, position, width) => {
   const translateX = position.interpolate({
@@ -47,8 +47,6 @@ let CollapseTransition = (index, position) => {
 const TransitionConfiguration = () => {
   return {
     transitionSpec: {
-      // speed: 1000,
-      // easing: Easing.out(Easing.poly(4)),
       timing: Animated.spring,
       useNativeDriver: true,
     },
@@ -72,7 +70,7 @@ const ScreenNavigation = createStackNavigator ({
   WelcomeScreen,
   SlideFromBottom: { screen: Register },
   Dashboard,
-  Actions
+  Logs
 }, {
   defaultNavigationOptions: {
     headerStyle: {

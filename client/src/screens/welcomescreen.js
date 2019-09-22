@@ -5,6 +5,7 @@ import Snackbar from 'react-native-snackbar'
 
 import Icon from 'react-native-vector-icons/Ionicons'
 import Animated, { Easing } from 'react-native-reanimated'
+import Loader from '../components/loader'
 
 import { Block, Text } from '../components'
 import * as theme from '../constats/theme'
@@ -15,6 +16,7 @@ const WelcomeScreen = (props) => {
   const { Value, event, block, cond, eq, set, Clock, startClock, stopClock, debug, timing, clockRunning, interpolate, Extrapolate, concat } = Animated
 
   const [show, setShow] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const buttonOpacity = new Value(1)
 
   const snackbar = () => {
@@ -49,7 +51,7 @@ const WelcomeScreen = (props) => {
     };
   
     const config = {
-      duration: 1000,
+      duration: 700,
       toValue: new Value(0),
       easing: Easing.inOut(Easing.ease)
     };
@@ -121,8 +123,17 @@ const WelcomeScreen = (props) => {
     }
   })
 
+  handleSignIn = () => {
+    setIsLoading(true)
+    setTimeout(() => {
+      setIsLoading(false)
+      props.navigation.navigate('Dashboard')
+    }, 5000);
+  }
+
   return (
     <Block end style={{backgroundColor: theme.colors.white}}>
+      <Loader modalVisible={isLoading}/>
       <Animated.View center style={{... StyleSheet.absoluteFill, marginVertical: 100 }}>
         <Text h1 center bold> Magic Livestock </Text>
         <Text body gray center style={{ marginTop: theme.sizes.padding / 2 }}> Monitoring and chill </Text>
@@ -186,7 +197,7 @@ const WelcomeScreen = (props) => {
           <TouchableOpacity style={styles.toggle} onPress={() => setShow(!show)}>
             { show ? <Icon name="md-eye-off" size={18} color={theme.colors.gray} /> : <Icon name="md-eye" size={18} color={theme.colors.gray} /> }
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => props.navigation.navigate('Dashboard', {transition: 'collapseTransition'})}>
+          <TouchableOpacity onPress={() => handleSignIn()}>
             <Animated.View 
               style={{ ...styles.btn, backgroundColor: '#f6f6f6' }}
             >
