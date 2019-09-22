@@ -8,21 +8,29 @@ import db from '../services/firebase'
 import * as theme from '../constats/theme'
 import { Block, Text } from '../components'
 
+import {connect} from 'react-redux'
+import {fetchData} from '../stores/actions/index'
 
 const Dashboard = (props) => {
+  const { data, fetchData } = props
 
-  const { width, height } = Dimensions.get('screen')
-  const [food, setFood] = useState(10)
-  const [foodInt, setFoodInt] = useState(false)
-  const [widthFood, setWidthFood] = useState(0)
-  const [light, setLight] = useState(1)
+  // const { width, height } = Dimensions.get('screen')
+  // const [food, setFood] = useState(10)
+  // const [foodInt, setFoodInt] = useState(false)
+  // const [widthFood, setWidthFood] = useState(0)
+  // const [light, setLight] = useState(1)
+
+  // useEffect(() => {
+  //   db.collection('machines').doc('machine-1').onSnapshot(querySnapshot => {
+  //     setLight(querySnapshot.data().led)
+  //     setFood(querySnapshot.data().height)
+  //   })
+  // },[])
 
   useEffect(() => {
-    db.collection('machines').doc('machine-1').onSnapshot(querySnapshot => {
-      setLight(querySnapshot.data().led)
-      setFood(querySnapshot.data().height)
-    })
-  },[])
+    fetchData('machine-1')
+    
+  },[fetchData('machine-1')])
 
   const styles = StyleSheet.create({
     header: {
@@ -187,4 +195,16 @@ Dashboard.navigationOptions = ({ navigation }) => {
     )
   }
 }
-export default Dashboard
+
+const mapStateToProps = (state) => {
+  return ({
+    data: state.machineReducer.data
+  })
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return ({
+    fetchData: (machineId) => dispatch(fetchData(machineId))
+  })
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

@@ -1,19 +1,18 @@
+import {CHANGE_DATA} from '../actions/index'
+
 const initState = {
   led: null,
   state: null,
   height: null
 }
 
-const reducer = (state = initState, action) => {
-  switch (action.key) {
-    case 'RECEIVE_FETCH_SOMETHING':
-      return {
-        ...state,
-        coordinate: action.payload
-      }
-      
-  
+const machineReducer = (state = initState, action) => {
+  switch (action.type) {
+    case CHANGE_DATA:
+      return { ...state, data: action.data}
     default:
       return state
   }
 }
+
+export default machineReducer
