@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native'
 
+import ToggleSwitch from 'toggle-switch-react-native'
 import * as Animatable from 'react-native-animatable';
 import { Bar } from 'react-native-progress';
 
@@ -16,11 +17,20 @@ const Dashboard = (props) => {
   const [foodInt, setFoodInt] = useState(false)
   const [widthFood, setWidthFood] = useState(0)
   const [light, setLight] = useState(1)
+  const [checked, setChecked] = useState(false)
+  const [motor, setMotor] = useState(null)
+  const widthh = 140
+  const heightt = 8
 
   useEffect(() => {
     db.collection('machines').doc('machine-1').onSnapshot(querySnapshot => {
       setLight(querySnapshot.data().led)
       setFood(querySnapshot.data().height)
+      setMotor(querySnapshot.data().state)
+      if (querySnapshot.data().led == 1) {
+        setChecked(true)
+      }
+      else setChecked(false)
     })
   },[])
 
@@ -36,15 +46,32 @@ const Dashboard = (props) => {
       borderRadius: 20
     },
     progressBar: {
-      width: 100,
-      height: 8,
-      marginHorizontal: 5
+      marginHorizontal: 5,
     },
     card: {
-      width: 150,
-      backgroundColor: theme.colors.accent,
+      width: 130,
+      backgroundColor: theme.colors.tertiary,
       borderBottomLeftRadius: 10,
       borderTopLeftRadius: 10
+    },
+    container: {
+      paddingHorizontal: theme.sizes.base * 2,
+    },
+    cardAct: {
+      width: 140,
+      height: 110,
+      backgroundColor: 'whitesmoke',
+      borderLeftWidth: 5,
+      borderLeftColor: theme.colors.tertiary,
+      borderBottomEndRadius: 5,
+      borderTopRightRadius: 5,
+      shadowColor: theme.colors.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      padding: 25,
+      justifyContent: 'center',
+      alignItems: 'center'
     }
   })
 
@@ -67,13 +94,31 @@ const Dashboard = (props) => {
   },[widthFood])
 
 
+  const turn = () => {
+    if (checked) {
+      db.collection('machines').doc('machine-1').update({
+        led: 0 
+      })
+    } else {
+      db.collection('machines').doc('machine-1').update({
+        led: 1 
+      })
+    }
+  }
+
+  const open = () => {
+    db.collection('machines').doc('machine-1').update({
+      state: !motor
+    })
+  }
+
   return (
     <Block style={{ backgroundColor: '#f9f6ea' }}>
       <Block flex={false} row center style={styles.header}>
         <Text h1 bold> Dashboard </Text>
         <Animatable.Image animation='tada' delay={600} style={styles.avatar} source={require('../../assets/images/avatar_1x.jpg')}/> 
       </Block>
-      <Block flex={false} row center style={{justifyContent: 'space-between', marginVertical: 30, paddingHorizontal: theme.sizes.base}}>
+      <Block flex={false} row center style={{justifyContent: 'space-between', marginVertical: 10, paddingHorizontal: theme.sizes.base}}>
         <Block>
           { widthFood < 0.3 ? (
             <Animatable.Image 
@@ -94,12 +139,14 @@ const Dashboard = (props) => {
           <Block row center>
             <Image 
               source={require('../../assets/images/icons8-mayonnaise-50.png')}
-              style={{width: 20, height: 20}}
+              style={{width: 22, height: 22}}
             />
             <Block flex={false}>
               <Text center small> {((1-food/30) * 100).toFixed(2)}% </Text>
               <Bar 
                 style={styles.progressBar}
+                width= {widthh}
+                height= {heightt}
                 progress={widthFood}
                 indeterminate={foodInt}
                 borderColor='#648F5B'
@@ -124,6 +171,8 @@ const Dashboard = (props) => {
               <Text center small> { light == 0 ? 'OFF' : 'ON' } </Text>
               <Bar 
                 style={styles.progressBar}
+                width= {widthh}
+                height= {heightt}
                 progress={light}
                 borderColor='#648F5B'
                 color='#648F5B'
@@ -134,13 +183,15 @@ const Dashboard = (props) => {
           <Block row center>
             <Image 
               source={require('../../assets/images/icons8-thermometer-50.png')}
-              style={{width: 20, height: 20}}
+              style={{width: 25, height: 25}}
             />
             <Block flex={false}>
               <Text center small> 20°C </Text>
               <Bar 
                 style={styles.progressBar}
                 progress={4}
+                width= {widthh}
+                height= {heightt}
                 indeterminate={false}
                 borderColor='#648F5B'
                 color='#648F5B'
@@ -150,18 +201,39 @@ const Dashboard = (props) => {
           </Block>
         </Block>
       </Block>
-      <Block flex={0.4} style={{alignItems: 'flex-end', marginVertical: 20}}>
-        <TouchableOpacity onPress={() => props.navigation.navigate('Actions')}>
-          <Block row style={styles.card}>
-            <Block middle center>
-              <Text body semibold> Take </Text>
-              <Text body semibold> Actions </Text>
-            </Block>
-            <Block center middle>
+      <Block flex={0.5} style={styles.container}>
+        <Block row style={{justifyContent: 'space-between'}} >
+          <Block flex={false}>
+            <TouchableOpacity onPress={() => turn()} style={styles.cardAct}>
               <Image 
-                source={require('../../assets/images/icons8-sort-right-26.png')}
+                source={require('../../assets/images/icons8-light-50.png')}
+                style={{width: 22, height: 22}}
+              />
+              <Text body semibold> Light </Text>
+            </TouchableOpacity>
+            </Block>
+          <Block flex={false}>
+            <TouchableOpacity onPress={() => open()} style={styles.cardAct}>
+              <Image 
+                source={require('../../assets/images/icons8-man-feeding-duck-50.png')}
                 style={{width: 25, height: 25}}
               />
+              <Text body semibold> Feed </Text>
+            </TouchableOpacity>
+          </Block>
+        </Block>
+      </Block>  
+      <Block flex={0.25} style={{alignItems: 'flex-end', marginTop: 10}}>
+        <TouchableOpacity onPress={() => props.navigation.navigate('Logs')}> 
+          <Block center middle style={styles.card}>
+            <Block row style={{justifyContent: 'space-around'}}>
+              <Block middle style={{alignItems:'flex-end'}}>
+                <Text semibold> View </Text>
+                <Text semibold> Logs </Text>
+              </Block>
+              <Block middle center>
+                <Image source={require('../../assets/images/icons8-forward-50.png')} style={{width: 28, height: 28}} />
+              </Block>
             </Block>
           </Block>
         </TouchableOpacity>
