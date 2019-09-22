@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native'
 
-import ToggleSwitch from 'toggle-switch-react-native'
 import * as Animatable from 'react-native-animatable';
 import { Bar } from 'react-native-progress';
 
