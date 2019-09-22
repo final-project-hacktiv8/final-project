@@ -1,21 +1,30 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { StyleSheet, Image, Dimensions, TextInput, TouchableOpacity } from 'react-native'
+<<<<<<< HEAD
 import { State, TapGestureHandler } from 'react-native-gesture-handler'
 import Snackbar from 'react-native-snackbar'
+=======
+import { TapGestureHandler } from 'react-native-gesture-handler'
+import Toast, {DURATION} from 'react-native-easy-toast'
+>>>>>>> 2f0884e2... store connected
 
 import Icon from 'react-native-vector-icons/Ionicons'
 import Animated, { Easing } from 'react-native-reanimated'
 import Loader from '../components/loader'
 
+import { signIn } from '../stores/actions'
 import { Block, Text } from '../components'
 import * as theme from '../constats/theme'
 
 const WelcomeScreen = (props) => {
 
   const { width, height } = Dimensions.get('screen')
-  const { Value, event, block, cond, eq, set, Clock, startClock, stopClock, debug, timing, clockRunning, interpolate, Extrapolate, concat } = Animated
+  const { interpolate, Extrapolate, concat } = Animated
 
+  const dispatch = useDispatch()
   const [show, setShow] = useState(true)
+<<<<<<< HEAD
   const [isLoading, setIsLoading] = useState(false)
   const buttonOpacity = new Value(1)
 
@@ -70,6 +79,12 @@ const WelcomeScreen = (props) => {
       state.position
     ]);
   }
+=======
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const user = useSelector(state => state.user)
+  const [buttonOpacity, setOpacity] =  useState(1)
+>>>>>>> 2f0884e2... store connected
 
   const btnY = interpolate(buttonOpacity, { inputRange: [0, 1], outputRange: [100, 0], extrapolate: Extrapolate.CLAMP }) 
   const bgY = interpolate(buttonOpacity, { inputRange: [0, 1], outputRange: [-height / 4, 0], extrapolate: Extrapolate.CLAMP }) 
@@ -124,16 +139,17 @@ const WelcomeScreen = (props) => {
   })
 
   handleSignIn = () => {
-    setIsLoading(true)
-    setTimeout(() => {
-      setIsLoading(false)
-      props.navigation.navigate('Dashboard')
-    }, 5000);
+    dispatch(signIn({ email, password }, props.navigation))
+  }
+
+  function Toasterr () {
+    toast.show("hello")
+    console.log("masuk error")
   }
 
   return (
     <Block end style={{backgroundColor: theme.colors.white}}>
-      <Loader modalVisible={isLoading}/>
+      <Loader modalVisible={user.isLoading}/>
       <Animated.View center style={{... StyleSheet.absoluteFill, marginVertical: 100 }}>
         <Text h1 center bold> Magic Livestock </Text>
         <Text body gray center style={{ marginTop: theme.sizes.padding / 2 }}> Monitoring and chill </Text>
@@ -143,7 +159,11 @@ const WelcomeScreen = (props) => {
         />
       </Animated.View>
       <Block flex={false} style={{height: height / 4}}> 
+<<<<<<< HEAD
         <TapGestureHandler onHandlerStateChange={() => snackbar()}>
+=======
+        <TapGestureHandler onHandlerStateChange={(a) =>  setOpacity(0) }>
+>>>>>>> 2f0884e2... store connected
           <Animated.View 
             style={{ ...styles.btn, backgroundColor: theme.colors.accent, opacity: buttonOpacity, transform: [{translateY: btnY}] }}
           >
@@ -171,7 +191,7 @@ const WelcomeScreen = (props) => {
           }}
         >
 
-          <TapGestureHandler onHandlerStateChange={onClose}>
+          <TapGestureHandler onHandlerStateChange={() => setOpacity(1)}>
             <Animated.View style={styles.clsbtn}>
               <Animated.Text style={{fontWeight: 'bold', transform: [{rotate: concat(rotateClose, 'deg')}] }}> X </Animated.Text>
             </Animated.View>
@@ -183,7 +203,12 @@ const WelcomeScreen = (props) => {
             autoComplete="off"
             autoCapitalize="none"
             autoCorrect={false}
+            autoFocus={true}
             keyboardType='email-address'
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text)
+            }}
           />
           <TextInput 
             placeholder='Password'
@@ -191,8 +216,9 @@ const WelcomeScreen = (props) => {
             secureTextEntry={show}
             autoComplete="off"
             autoCapitalize="none"
-            autoFocus={true}
             autoCorrect={false}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
           />
           <TouchableOpacity style={styles.toggle} onPress={() => setShow(!show)}>
             { show ? <Icon name="md-eye-off" size={18} color={theme.colors.gray} /> : <Icon name="md-eye" size={18} color={theme.colors.gray} /> }

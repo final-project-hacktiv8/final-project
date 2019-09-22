@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { KeyboardAvoidingView, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import { Button } from 'native-base'
 import Icon from 'react-native-vector-icons/Ionicons'
 
+import { signUp } from '../stores/actions'
 import * as theme from '../constats/theme'
 import { Block, Text } from '../components'
 
@@ -34,11 +36,15 @@ const Register = () => {
     }
   })
 
+  const dispatch = useDispatch()
   const [show, setShow] = useState(true)
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSignUp = () => {
+    dispatch(signUp({ fullname: fullName, email, password }))
+  }
 
   return (
     <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'center' }} behavior='padding'>
@@ -85,7 +91,7 @@ const Register = () => {
               { show ? <Icon name="md-eye-off" size={18} color={theme.colors.gray} /> : <Icon name="md-eye" size={18} color={theme.colors.gray} /> }
             </TouchableOpacity>
           </Block>
-          <Button style={styles.btn} onPress={() => setIsLoading(!isLoading)}>
+          <Button style={styles.btn} onPress={() => handleSignUp()}>
             <Text center semibold white style={{width: '100%'}}> Sign Up </Text>
           </Button>
         </Block>
