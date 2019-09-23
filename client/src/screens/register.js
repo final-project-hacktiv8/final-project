@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { KeyboardAvoidingView, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import { Button } from 'native-base'
 import Icon from 'react-native-vector-icons/Ionicons'
 
-import { signUp } from '../stores/actions'
+import AwesomeAlert from 'react-native-awesome-alerts';
+import { signUp, removeErrorUser } from '../stores/actions'
 import * as theme from '../constats/theme'
 import { Block, Text } from '../components'
 
-const Register = () => {
+const Register = (props) => {
 
   const styles = StyleSheet.create({
     input: {
@@ -37,13 +38,32 @@ const Register = () => {
   })
 
   const dispatch = useDispatch()
+  const user = useSelector(state => state.user)
   const [show, setShow] = useState(true)
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showAlert, setShowAlert] = useState(false)
+  const [isError, setIsError] = useState(null)
+
+  useEffect(() => {
+    if (isError) {
+      console.log(isError);
+      
+    }
+  }, [isError])
+
+  useEffect(() => {
+    if (user.isError) {
+      // setIsError(user.isError)
+      setShowAlert(true)
+    } else {
+      setShowAlert(false)
+    }
+  }, [user.isError])
 
   const handleSignUp = () => {
-    dispatch(signUp({ fullname: fullName, email, password }))
+    dispatch(signUp({ fullname: fullName, email, password }, props.navigation))
   }
 
   return (
@@ -58,6 +78,7 @@ const Register = () => {
               autoComplete="off"
               autoCapitalize="none"
               autoCorrect={false}
+              autoFocus={true}
               keyboardType='email-address'
               value={fullName}
               onChangeText={(text) => setFullName(text)}
@@ -82,7 +103,6 @@ const Register = () => {
               secureTextEntry={show}
               autoComplete="off"
               autoCapitalize="none"
-              autoFocus={true}
               autoCorrect={false}
               value={password}
               onChangeText={(text) => setPassword(text)}
@@ -96,6 +116,20 @@ const Register = () => {
           </Button>
         </Block>
       </Block>
+      <AwesomeAlert
+        show={showAlert}
+        showProgress={false}
+        title="Something Wrong"
+        message={user.isError}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        onConfirmPressed={() => {
+          setIsError(null)
+          dispatch(removeErrorUser())
+          setShowAlert(false)
+        }}
+      />
     </KeyboardAvoidingView>
   )
 }

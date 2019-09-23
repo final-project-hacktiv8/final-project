@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native'
+import { StyleSheet, TouchableOpacity, Dimensions, Image, AsyncStorage } from 'react-native'
 
 import * as Animatable from 'react-native-animatable';
 import { Bar } from 'react-native-progress';
@@ -12,20 +12,22 @@ import { Block, Text } from '../components'
 const Dashboard = (props) => {
 
   const { width, height } = Dimensions.get('screen')
-  const [food, setFood] = useState(10)
+  const [food, setFood] = useState(1)
   const [foodInt, setFoodInt] = useState(false)
   const [widthFood, setWidthFood] = useState(0)
-  const [light, setLight] = useState(1)
+  const [light, setLight] = useState(null)
+  const [suhu, setSuhu] =useState(null)
   const [checked, setChecked] = useState(false)
   const [motor, setMotor] = useState(null)
-  const widthh = 140
-  const heightt = 8
+  const widthh = 120
+  const heightt = 6
 
   useEffect(() => {
     db.collection('machines').doc('machine-1').onSnapshot(querySnapshot => {
       setLight(querySnapshot.data().led)
       setFood(querySnapshot.data().height)
       setMotor(querySnapshot.data().state)
+      setSuhu(querySnapshot.data().temperature)
       if (querySnapshot.data().led == 1) {
         setChecked(true)
       }
@@ -48,34 +50,39 @@ const Dashboard = (props) => {
       marginHorizontal: 5,
     },
     card: {
-      width: 130,
+      width: width / 2 - theme.sizes.base,
       backgroundColor: theme.colors.tertiary,
-      borderBottomLeftRadius: 10,
-      borderTopLeftRadius: 10
+      borderBottomLeftRadius: 5,
+      borderTopLeftRadius: 5,
+      backgroundColor: '#f7ed83',
+      shadowColor: theme.colors.black,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
     },
     container: {
       paddingHorizontal: theme.sizes.base * 2,
     },
     cardAct: {
-      width: 140,
-      height: 110,
+      width: 130,
+      height: 100,
       backgroundColor: 'whitesmoke',
-      borderLeftWidth: 5,
-      borderLeftColor: theme.colors.tertiary,
-      borderBottomEndRadius: 5,
-      borderTopRightRadius: 5,
+      borderRadius: 20,
       shadowColor: theme.colors.black,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.2,
       shadowRadius: 5,
       padding: 25,
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       alignItems: 'center'
     }
   })
 
   useEffect(() => {
     animate()
+    // AsyncStorage.getItem('user', (err, result) => {
+    //   console.log(result);
+    // });
   }, [])
 
   const animate = () => {
@@ -114,7 +121,7 @@ const Dashboard = (props) => {
   return (
     <Block style={{ backgroundColor: '#f9f6ea' }}>
       <Block flex={false} row center style={styles.header}>
-        <Text h1 bold> Dashboard </Text>
+        <Text h1 bold> Magic Livestock </Text>
         <Animatable.Image animation='tada' delay={600} style={styles.avatar} source={require('../../assets/images/avatar_1x.jpg')}/> 
       </Block>
       <Block flex={false} row center style={{justifyContent: 'space-between', marginVertical: 10, paddingHorizontal: theme.sizes.base}}>
@@ -141,15 +148,15 @@ const Dashboard = (props) => {
               style={{width: 22, height: 22}}
             />
             <Block flex={false}>
-              <Text center small> {((1-food/30) * 100).toFixed(2)}% </Text>
+              <Text center small> {((1-food/30) * 100).toFixed()}% </Text>
               <Bar 
                 style={styles.progressBar}
                 width= {widthh}
                 height= {heightt}
                 progress={widthFood}
                 indeterminate={foodInt}
-                borderColor='#648F5B'
-                color='#648F5B'
+                borderColor='#06967A'
+                color='#06967A'
                 unfilledColor='whitesmoke'
               />
             </Block>
@@ -158,12 +165,12 @@ const Dashboard = (props) => {
             { light == 0 ? (
               <Image 
                 source={require('../../assets/images/icons8-light-off-50.png')}
-                style={{width: 25, height: 25}}
+                style={{width: 27, height: 27}}
               />
             ) : (
               <Image 
                 source={require('../../assets/images/icons8-light-on-50.png')}
-                style={{width: 25, height: 25}}
+                style={{width: 27, height: 27}}
               />
             ) }
             <Block flex={false}>
@@ -173,8 +180,8 @@ const Dashboard = (props) => {
                 width= {widthh}
                 height= {heightt}
                 progress={light}
-                borderColor='#648F5B'
-                color='#648F5B'
+                borderColor='#06967A'
+                color='#06967A'
                 unfilledColor='whitesmoke'
               />
             </Block>
@@ -185,15 +192,15 @@ const Dashboard = (props) => {
               style={{width: 25, height: 25}}
             />
             <Block flex={false}>
-              <Text center small> 20°C </Text>
+              <Text center small> {suhu}°C </Text>
               <Bar 
                 style={styles.progressBar}
-                progress={4}
+                progress={(suhu/100)}
                 width= {widthh}
                 height= {heightt}
                 indeterminate={false}
-                borderColor='#648F5B'
-                color='#648F5B'
+                borderColor='#06967A'
+                color='#06967A'
                 unfilledColor='whitesmoke'
               />
             </Block>
@@ -203,19 +210,19 @@ const Dashboard = (props) => {
       <Block flex={0.5} style={styles.container}>
         <Block row style={{justifyContent: 'space-between'}} >
           <Block flex={false}>
-            <TouchableOpacity onPress={() => turn()} style={styles.cardAct}>
+            <TouchableOpacity onPress={() => turn()} style={[styles.cardAct, light == 1 ? {borderWidth: 1, borderColor: '#06967A', shadowOpacity: 0.4, shadowRadius: 5, shadowColor: '#06967A', backgroundColor: '#f9fcf2'} : null ]}>
               <Image 
                 source={require('../../assets/images/icons8-light-50.png')}
-                style={{width: 22, height: 22}}
+                style={{width: 30, height: 30}}
               />
               <Text body semibold> Light </Text>
             </TouchableOpacity>
-            </Block>
+          </Block>
           <Block flex={false}>
-            <TouchableOpacity onPress={() => open()} style={styles.cardAct}>
+            <TouchableOpacity onPress={() => open()} style={[styles.cardAct, motor ? {borderWidth: 1, borderColor: '#06967A', shadowOpacity: 0.4, shadowRadius: 5, shadowColor: '#06967A', backgroundColor: '#f9fcf2'} : null ]}>
               <Image 
                 source={require('../../assets/images/icons8-man-feeding-duck-50.png')}
-                style={{width: 25, height: 25}}
+                style={{width: 30, height: 30}}
               />
               <Text body semibold> Feed </Text>
             </TouchableOpacity>
@@ -241,6 +248,7 @@ const Dashboard = (props) => {
   )
 }
 
+
 Dashboard.navigationOptions = ({ navigation }) => {
   return {
     headerStyle: {
@@ -249,7 +257,9 @@ Dashboard.navigationOptions = ({ navigation }) => {
     },
     headerLeft: null,
     headerRight: (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => AsyncStorage.removeItem('user', () => {
+        navigation.navigate('WelcomeScreen')
+      })}>
         <Image 
           source={require('../../assets/images/icons8-ellipsis-50.png')}
           style={{height: 20, width: 20}}

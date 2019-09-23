@@ -1,5 +1,6 @@
 import db from '../../services/firebase'
 import ax from '../../services/server'
+import { AsyncStorage } from 'react-native'
 
 // Machine Creators
 export const changeData = data => {
@@ -23,8 +24,15 @@ export const signIn = (userData, navigation) => {
         dispatch({type: 'SET_LOADING_USER', payload: true})
         ax.post('/user/signin', userData)
             .then(({ data }) => {
-                dispatch({type: 'SET_LOADING_USER', payload: false})
-                navigation.navigate('Dashboard')
+                dispatch({type: 'RECEIVE_FETCH_USER', payload: {user: data.data, token: data.token} })
+                AsyncStorage.setItem('user', JSON.stringify(data.data), () => {
+                    AsyncStorage.mergeItem('user', JSON.stringify({token: data.token}), () => {
+                        dispatch({type: 'SET_LOADING_USER', payload: false})
+                        setTimeout(() => {
+                            navigation.navigate('Dashboard', {transition: 'collapseTransition'})
+                        }, 1000);
+                    });
+                  });
             })
             .catch(err => {
                 dispatch({type: 'SET_ERROR_USER', payload: err.response.data.message})
@@ -33,16 +41,55 @@ export const signIn = (userData, navigation) => {
     }
 }
 
-export const signUp = (userData) => {
+export const signUp = (userData, navigation) => {
     return dispatch => {
         dispatch({type: 'SET_LOADING_USER', payload: true})
         ax.post('user/signup', userData)
             .then(({ data }) => {
-                
+                dispatch({type: 'RECEIVE_FETCH_USER', payload: {user: data.data, token: data.token} })
+                AsyncStorage.setItem('user', JSON.stringify(data.data), () => {
+                    AsyncStorage.mergeItem('user', JSON.stringify({token: data.token}), () => {
+                        dispatch({type: 'SET_LOADING_USER', payload: false})
+                        setTimeout(() => {
+                            navigation.navigate('Dashboard')
+                        }, 1000);
+                    });
+                  });
             })
             .catch(err => {
                 dispatch({type: 'SET_ERROR_USER', payload: err.response.data.message})
                 dispatch({type: 'SET_LOADING_USER', payload: false})
             })
+    }
+}
+
+export const changePhoto = (base64Image, token) => {
+    return dispatch => {
+        dispatch({type: 'SET_LOADING_USER', payload: true})
+        ax.post('user/changephoto', {photo : base64Image}, {headers: {token}})
+            .then(({ data }) => {
+                console.log(data.photo_path);
+                dispatch({type:'SET_PHOTO_USER', payload: data.photo_path })
+                dispatch({type: 'SET_LOADING_USER', payload: false})
+            })
+            .catch(err => {
+                console.log(err.response.data.message);
+                dispatch({type: 'SET_ERROR_USER', payload: err.response.data.message})
+                dispatch({type: 'SET_LOADING_USER', payload: false})
+            })
+
+    }
+}
+
+export const checkerLogin = (userData, navigation) => {
+    return dispatch => {
+        dispatch({type: 'CHECKER_LOGIN', payload: userData})
+        navigation.navigate('Dashboard')
+    }
+}
+
+export const removeErrorUser = () => {
+    return dispatch => {
+        dispatch({type: 'REMOVE_ERROR_USER'})
     }
 }

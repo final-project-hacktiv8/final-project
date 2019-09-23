@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Dimensions, TouchableOpacity, Image, FlatList, ScrollView, Modal } from 'react-native'
+import { useSelector, useDispatch } from 'react-redux'
+import { StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Modal } from 'react-native'
 
-import {LinearGradient} from 'expo-linear-gradient'
+import * as ImagePicker from 'expo-image-picker'
+import * as Permissions from 'expo-permissions'
+import { LinearGradient } from 'expo-linear-gradient'
 
+import { changePhoto } from '../stores/actions'
+
+import Loader from '../components/loader'
 import * as theme from '../constats/theme'
 import { Block, Text } from '../components'
 
 const Logs = (props) => {
   
+  const dispatch = useDispatch()
+  const user  = useSelector(state => state.user)
   const [modalVisible, setModalVisible] = useState(false)
+  const [changed, setChanged] = useState(false)
 
   const styles = StyleSheet.create({
     container: {
@@ -44,11 +53,45 @@ const Logs = (props) => {
     }
   })
 
+  useEffect(() => {
+    checkPermission()
+  },[])
+
+  useEffect(() => {
+    setChanged(false)
+  },[user.photo_path])
+
+  const checkPermission = async () => {
+    const granted = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+    if (granted === Permissions.CAMERA_ROLL) return true
+    else return false
+  }
+
+  const handleChangePhoto = async () => {
+    if (checkPermission()){
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [3,3],
+        quality: 0.5,
+        base64: true
+      })
+      
+      if (!result.cancelled){
+        let ext = result.uri.split('.')[1]
+        const image = `data:image/${ext};base64,${result.base64}`
+        dispatch(changePhoto(image, user.token))
+        setChanged(true)
+      }
+    }
+  }
+ 
 
   return (
     <Block>
+      <Loader modalVisible={user.isLoading} />
       <Block flex={false} row center style={{paddingHorizontal: theme.sizes.base * 2, justifyContent: 'space-between'}}>
-        <Text h1 bold> Hey Fauzi! </Text>
+        <Text h1 bold> Hey {user.fullname}! </Text>
           <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Image 
               source={require('../../assets/images/avatar_1x.jpg')}
@@ -103,15 +146,16 @@ const Logs = (props) => {
                 source={require('../../assets/images/avatar_1x.jpg')}
                 style={{width: 100, height: 100, borderRadius: 20, marginBottom: 5}}
               />
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => handleChangePhoto()}>
                 <Text small style={{color: '#0000EE', marginVertical: 5}}> Change Profile Photo </Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text small style={{color: '#0000EE'}}> Cancel </Text>
+                <Text small style={{color: '#0000EE'}}> Done </Text>
               </TouchableOpacity>
             </Block>
           </Block>
         </Block>
+        <Loader modalVisible={changed}/>
       </Modal>
     </Block>
   )

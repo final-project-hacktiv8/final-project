@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+<<<<<<< HEAD
 import { StyleSheet, Image, Dimensions, TextInput, TouchableOpacity } from 'react-native'
 <<<<<<< HEAD
 import { State, TapGestureHandler } from 'react-native-gesture-handler'
@@ -8,12 +9,17 @@ import Snackbar from 'react-native-snackbar'
 import { TapGestureHandler } from 'react-native-gesture-handler'
 import Toast, {DURATION} from 'react-native-easy-toast'
 >>>>>>> 2f0884e2... store connected
+=======
+import { StyleSheet, Image, Dimensions, TextInput, TouchableOpacity, AsyncStorage } from 'react-native'
+import { TapGestureHandler } from 'react-native-gesture-handler'
+>>>>>>> 66ad8ffd... i guess is done
 
+import AwesomeAlert from 'react-native-awesome-alerts';
 import Icon from 'react-native-vector-icons/Ionicons'
 import Animated, { Easing } from 'react-native-reanimated'
 import Loader from '../components/loader'
 
-import { signIn } from '../stores/actions'
+import { signIn, checkerLogin, removeErrorUser } from '../stores/actions'
 import { Block, Text } from '../components'
 import * as theme from '../constats/theme'
 
@@ -83,8 +89,32 @@ const WelcomeScreen = (props) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const user = useSelector(state => state.user)
+<<<<<<< HEAD
   const [buttonOpacity, setOpacity] =  useState(1)
 >>>>>>> 2f0884e2... store connected
+=======
+  const [buttonOpacity, setOpacity] = useState(1)
+  const [showAlert, setShowAlert] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+
+  useEffect(() => {
+    AsyncStorage.getItem('user', (error, result) => {
+      if (result) {
+         let resultParsed = JSON.parse(result)
+         dispatch(checkerLogin(resultParsed, props.navigation))
+      }
+    });
+  },[])
+
+  useEffect(() => {
+    if(user.isError) {
+      setErrorMessage(user.isError)
+      setShowAlert(true)
+    } else {
+      setShowAlert(false)
+    }
+  },[user.isError])
+>>>>>>> 66ad8ffd... i guess is done
 
   const btnY = interpolate(buttonOpacity, { inputRange: [0, 1], outputRange: [100, 0], extrapolate: Extrapolate.CLAMP }) 
   const bgY = interpolate(buttonOpacity, { inputRange: [0, 1], outputRange: [-height / 4, 0], extrapolate: Extrapolate.CLAMP }) 
@@ -140,6 +170,9 @@ const WelcomeScreen = (props) => {
 
   handleSignIn = () => {
     dispatch(signIn({ email, password }, props.navigation))
+    setOpacity(1)
+    setEmail('')
+    setPassword('')
   }
 
   function Toasterr () {
@@ -158,6 +191,22 @@ const WelcomeScreen = (props) => {
           style={{width: width, height: height/2, marginVertical: 15}   }
         />
       </Animated.View>
+      <AwesomeAlert
+        show={showAlert}
+        showProgress={false}
+        title="Incorrect"
+        message={errorMessage}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        onConfirmPressed={() => {
+          removeErrorUser()
+          setShowAlert(false)
+        }}
+        cancelButtonStyle={
+          color='transparent'
+        }
+      />
       <Block flex={false} style={{height: height / 4}}> 
 <<<<<<< HEAD
         <TapGestureHandler onHandlerStateChange={() => snackbar()}>
@@ -173,7 +222,6 @@ const WelcomeScreen = (props) => {
         <TouchableOpacity onPress={() => props.navigation.navigate('SlideFromBottom')}>
           <Animated.View 
             style={{ ...styles.btn, backgroundColor: 'whitesmoke', opacity: buttonOpacity, transform: [{translateY: btnY}] }}
-            
           >
             <Text semibold> Sign Up </Text>
           </Animated.View>
