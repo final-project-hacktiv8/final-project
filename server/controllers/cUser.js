@@ -30,7 +30,8 @@ class UserController {
         const { fullname, email, password } = req.body
         ModelUser.create({fullname,email, password})
         .then(data => {
-            res.status(201).send(data)
+            const token = createToken(data)
+            res.status(201).send({token, data})
         })
         .catch(next)
     }
