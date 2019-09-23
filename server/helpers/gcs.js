@@ -5,6 +5,8 @@ const storage = new Storage.Storage({
     keyFilename: 'keyfile.json'
 })
 
+
+console.log(CLOUD_BUCKET)
 const bucket = storage.bucket(CLOUD_BUCKET);
 
 const getPublicUrl = (filename) => {
