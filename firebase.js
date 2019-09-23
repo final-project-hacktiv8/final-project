@@ -1,6 +1,6 @@
 const app = require('firebase/app')
 require('firebase/firebase-firestore')
-
+require('dotenv').config()
 global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 
 
