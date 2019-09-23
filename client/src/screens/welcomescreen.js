@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { StyleSheet, Image, Dimensions, TextInput, TouchableOpacity } from 'react-native'
 import { State, TapGestureHandler } from 'react-native-gesture-handler'
+import Snackbar from 'react-native-snackbar'
 
 import Icon from 'react-native-vector-icons/Ionicons'
 import Animated, { Easing } from 'react-native-reanimated'
@@ -15,6 +16,13 @@ const WelcomeScreen = (props) => {
 
   const [show, setShow] = useState(true)
   const buttonOpacity = new Value(1)
+
+  const snackbar = () => {
+    Snackbar.show({
+      title: 'Error',
+      duration: Snackbar.LENGTH_SHORT,
+    })
+  }
 
   const onStateChange = event([
     {
@@ -120,11 +128,11 @@ const WelcomeScreen = (props) => {
         <Text body gray center style={{ marginTop: theme.sizes.padding / 2 }}> Monitoring and chill </Text>
         <Image 
           source={require('../../assets/images/farming-01.jpg')}
-          style={{width: width, height: height/2, marginVertical: 15}}
+          style={{width: width, height: height/2, marginVertical: 15}   }
         />
       </Animated.View>
       <Block flex={false} style={{height: height / 4}}> 
-        <TapGestureHandler onHandlerStateChange={onStateChange}>
+        <TapGestureHandler onHandlerStateChange={() => snackbar()}>
           <Animated.View 
             style={{ ...styles.btn, backgroundColor: theme.colors.accent, opacity: buttonOpacity, transform: [{translateY: btnY}] }}
           >
