@@ -56,6 +56,7 @@ describe('User Test', function(){
                     expect(res).to.be.an('Object');
                     expect(res.body).to.have.property('message');
                     expect(res.body).to.have.property('statusCode');
+                    expect(res.body.message).to.include('Please');
                     done();
                 })
         })
@@ -129,7 +130,8 @@ describe('User Test', function(){
                     expect(res).to.have.status(400);
                     expect(res).to.be.an('Object');
                     expect(res.body).to.have.property('message');
-                    expect(res.body).to.have.property('statusCode')
+                    expect(res.body).to.have.property('statusCode');
+                    expect(res.body.message).to.include('not found');
                     done()
                 })
         })
@@ -146,6 +148,7 @@ describe('User Test', function(){
                     expect(res).to.be.an('Object');
                     expect(res.body).to.have.property('message');
                     expect(res.body).to.have.property('statusCode')
+                    expect(res.body.message).to.include('not found');
                     done()
                 })
         })
