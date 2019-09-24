@@ -16,12 +16,8 @@ class UserController {
                 {
                     const token = createToken(data)
                     res.status(200).send({token, data})
-                } else {
-                    next(err)
-                }
-            } else {
-                next(err)
-            }
+                } else next(err)
+            } else next(err)
         })
         .catch(next)
     }

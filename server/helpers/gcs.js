@@ -16,8 +16,8 @@ const getPublicUrl = (filename) => {
 const uploadFile = (req,res,next) => {
     let err = {}
     if (!req.file.mimetype.includes('image')){
-        err.statusCode(400)
-        err.message('Only Image Allowed')
+        err.statusCode = 400
+        err.message = 'Only Image Allowed'
         next(err)
     }
     
@@ -29,12 +29,16 @@ const uploadFile = (req,res,next) => {
           contentType: req.file.mimetype
         }
       })
+      
     
       stream.on('error', (err) => {
+        /* istanbul ignore next */
         req.file.cloudStorageError = err
+         /* istanbul ignore next */
         next(err)
+         /* istanbul ignore next */
       })
-    
+
       stream.on('finish', () => {
         req.file.cloudStorageObject = gcsname
         delete req.file.buffer

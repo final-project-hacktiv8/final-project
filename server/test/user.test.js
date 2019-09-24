@@ -118,7 +118,7 @@ describe('User Test', function(){
                 })
         })
 
-        it('Failed Login when email / password not match', function(done){
+        it('Failed Login when password not match', function(done){
             chai.request(app)
                 .post('/user/signin')
                 .send({
@@ -133,6 +133,23 @@ describe('User Test', function(){
                     done()
                 })
         })
+        
+        it('Failed Login when email not found', function(done){
+            chai.request(app)
+                .post('/user/signin')
+                .send({
+                    email: "1bs2@gmail.com",
+                    password: "iningasal"
+                })
+                .end(function(err,res){
+                    expect(res).to.have.status(400);
+                    expect(res).to.be.an('Object');
+                    expect(res.body).to.have.property('message');
+                    expect(res.body).to.have.property('statusCode')
+                    done()
+                })
+        })
+        
     })    
 
     describe('Test routes /user/changephoto', function(){
@@ -174,6 +191,9 @@ describe('User Test', function(){
         it('denied when type file is not image in base64', function(done){
             chai.request(app)
                 .post('/user/changephoto')
+                .send({
+                    photo: image.slice(40)
+                })
                 .set('token', beforeChange.token)
                 .end(function(err,res){
                     expect(res).to.have.status(400);
@@ -190,13 +210,14 @@ describe('User Test', function(){
                 .post('/user/changephoto')
                 .set('token', beforeChange.token)
                 .send({
-                    image: "data:application/pdf;base64,1231241231512"
+                    photo: "data:application/pdf;base64,"+image.slice(23)
                 })
                 .end(function(err,res){
                     expect(res).to.have.status(400);
                     expect(res).to.be.an('Object');
                     expect(res.body).to.have.property('statusCode');
                     expect(res.body).to.have.property('message');
+                    expect(res.body.message).to.includes('Only')
                     done()
                 })
         })

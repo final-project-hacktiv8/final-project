@@ -7,16 +7,13 @@ module.exports = (err,req,res,next) => {
         message = err.errors[key[0]].message; 
     }
     if (err.name === "MongoError"){
-        if(err.code == 11000){
-            statusCode = 409;
-            message = 'email already used'
-        }
+        statusCode = 409;
+        message = 'email already used'
     }
-    if (err.name === "JsonWebTokenError"){
-        if(err.message === 'jwt malformed'){
-            statusCode = 401
-            message = "Token isn't valid"
-        }
+    if(err.message === 'jwt malformed'){
+        statusCode = 401
+        message = "Token isn't valid"
     }
+
     res.status(statusCode).json({statusCode, message})
 }
