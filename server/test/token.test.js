@@ -32,7 +32,7 @@ describe('Test push notification', function(){
                 })
         })
 
-        it ('Successfully add new token ', function(done){
+        it ('Handle Duplicate token', function(done){
             chai.request(app)
                 .post('/token/add')
                 .send(newData)
