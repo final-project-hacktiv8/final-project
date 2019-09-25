@@ -32,6 +32,21 @@ describe('Test push notification', function(){
                 })
         })
 
+        it ('Successfully add new token ', function(done){
+            chai.request(app)
+                .post('/token/add')
+                .send(newData)
+                .end(function(err,res){
+                    expect(res).to.have.status(201)
+                    expect(res).to.be.an('Object')
+                    expect(res.body).to.have.property('fullname')
+                    expect(res.body).to.have.property('expo_token')
+                    expect(res.body.fullname).to.equal(newData.fullname)
+                    expect(res.body.expo_token).to.equal(newData.expo_token)
+                    done()
+                })
+        })
+
         it('Error when missing 1 attribute', function(done){
             chai.request(app)
                 .post('/token/add')
