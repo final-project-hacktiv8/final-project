@@ -2,13 +2,19 @@ const ModelToken = require("../models/mToken");
 const axios = require("axios");
 
 class TokenController {
-  static addToken(req, res, next) {
+  static async addToken(req, res, next) {
     const { expo_token, fullname } = req.body;
-    ModelToken.create({ expo_token, fullname })
-      .then(data => {
-        res.status(201).send(data);
-      })
-      .catch(next);
+    try {
+        let cari = await ModelToken.findOne({expo_token})
+        let print_data = {expo_token, fullname};
+        if (cari == null){
+            print_data = await ModelToken.create({expo_token, fullname})
+        }
+        res.status(201).send(print_data)
+    } catch(err) {
+        next(err)
+    }
+    
   }
 
   static async sendNotification(req, res, next) {
