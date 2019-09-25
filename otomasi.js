@@ -12,7 +12,8 @@ board.on('ready', function () {
     controller: "LM35",
     pin: "A5"
   })
-	let centi = proximity.centimeters;
+  let centi = proximity.centimeters;
+  let suhu = thermometer.celsius
   let lapar = true;
   let logging = false;
 
@@ -68,14 +69,22 @@ board.on('ready', function () {
 	  	if (Math.ceil(centimeters) !== centi) {
 	  		console.log("kirim", centi, Math.ceil(centimeters), "ini")
         centi = Math.ceil(centimeters)
-        console.log("kirim", centi, Math.ceil(centimeters))
 	  		db.collection('machines').doc('machine-1').update({
-          height: centi,
-          temperature: celsius
+          height: centi
 	  		})
 	  	}
 	  	else {
 	  		console.log('masih stabil', Math.ceil(centimeters))
+      }
+      if (celsius !== suhu) {
+        console.log("kirim", suhu, celsius, "suhu")
+        suhu = celsius
+        db.collection('machines').doc('machine-1').update({
+          temperature: celsius
+	  		})
+      }
+      else {
+        console.log("suhu stabil", celsius)
       }
       if (centi > 25) {
         db.collection('machines').doc('machine-1').update({
@@ -85,30 +94,3 @@ board.on('ready', function () {
 	}, 3000)
 
 })
-
-
-	// db.collection('machines').doc('machine-1').onSnapshot(querySnapshot => {
-	// 	if (querySnapshot.data().state == true) {
-	// 		if (Math.ceil(proximity.centimeters) < 4) {
-	// 			console.log('masih penuh')
-  //     } 
-  //     else { 
-	// 			console.log('pintu terbuka')
-	// 			lapar = true
-	// 			servo.to(90)
-	// 		}
-  //   } 
-  //   else if (querySnapshot.data().state == false ) {
-  //     console.log('pintu tertutup')
-  //     lapar = false
-	// 		servo.to(0)
-	// 	}
-	// 	if (querySnapshot.data().led == 1) {
-	// 		console.log('lampu menyala')
-	// 		led.on()
-	// 	}
-	// 	else if (querySnapshot.data().led == 0) {
-	// 		console.log('lampu mati')
-	// 		led.off()
-  //   }
-	// })
