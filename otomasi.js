@@ -1,4 +1,4 @@
-let {Board, Proximity, Servo, Led} = require('johnny-five');
+let {Board, Proximity, Servo, Leds, Thermometer} = require('johnny-five');
 let board = new Board({ port: '/dev/ttyUSB0' })
 
 const db = require('./firebase').db
@@ -7,9 +7,14 @@ const firebase = require('./firebase').app
 board.on('ready', function () {
 	const proximity = new Proximity({ controller: 'HCSR04', pin: 7 })
 	const servo = new Servo({ pin: 3, startAt: 0 })
-	const lamp = new Led(2)
+  const lamp = new Leds([2,8])
+  const thermometer = new Thermometer({
+    controller: "LM35",
+    pin: "A5"
+  })
 	let centi = proximity.centimeters;
-	let lapar = true;
+  let lapar = true;
+  let logging = false;
 
   db.collection('machines').doc('machine-1').onSnapshot(querySnapshot => {
     let { state, height, led } = querySnapshot.data()
@@ -19,14 +24,18 @@ board.on('ready', function () {
       }
       else {
         lapar = true
-        servo.to(90)
-        db.collection('machines').doc('machine-1').update({
-          log: firebase.firestore.FieldValue.arrayUnion(new Date())
-        })
+        servo.to(40)
+        if(logging !== lapar){
+          logging = !logging
+          db.collection('machines').doc('machine-1').update({
+            logs: firebase.firestore.FieldValue.arrayUnion(new Date())
+          })
+        }
       }
     }
     else {
       lapar = false
+      logging = false
       servo.to(0)
     }
 
@@ -39,12 +48,10 @@ board.on('ready', function () {
   })
 
 
-
-
-	proximity.within([3,4], 'cm', () => {
+	proximity.within([3,6], 'cm', () => {
 		if(lapar){
-			servo.to(0)
-			lapar = false
+      lapar = false
+      console.log("masuk")
 			db.collection('machines').doc('machine-1').update({
 				state: false
 			})
@@ -55,18 +62,22 @@ board.on('ready', function () {
 	
 
 	setInterval(() => {
-	  const {centimeters} = proximity
+    const {centimeters} = proximity
+    const {celsius} = thermometer
+    console.log("celcius", celsius)
 	  	if (Math.ceil(centimeters) !== centi) {
-	  		console.log("kirim", centi, Math.ceil(centimeters))
-	  		centi = Math.ceil(centimeters)
+	  		console.log("kirim", centi, Math.ceil(centimeters), "ini")
+        centi = Math.ceil(centimeters)
+        console.log("kirim", centi, Math.ceil(centimeters))
 	  		db.collection('machines').doc('machine-1').update({
-	  			height: centi
+          height: centi,
+          temperature: celsius
 	  		})
 	  	}
 	  	else {
 	  		console.log('masih stabil', Math.ceil(centimeters))
       }
-      if (centi > 13) {
+      if (centi > 25) {
         db.collection('machines').doc('machine-1').update({
           state: true
         })
