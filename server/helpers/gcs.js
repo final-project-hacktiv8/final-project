@@ -2,7 +2,7 @@ const Storage = require('@google-cloud/storage');
 const CLOUD_BUCKET = process.env.BUCKET_NAME;
 
 const storage = new Storage.Storage({
-    keyFilename: 'keyfile.json'
+    keyFilename: 'keyfile.json',
 })
 
 
@@ -21,13 +21,13 @@ const uploadFile = (req,res,next) => {
         next(err)
     }
     
-      const gcsname = req.file.originalname
+      const gcsname = new Date().getMilliseconds()+req.file.originalname
       const file = bucket.file(gcsname)
     
       const stream = file.createWriteStream({
         metadata: {
           contentType: req.file.mimetype
-        }
+        },
       })
       
     
