@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Modal } from 'react-native'
+import { StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Modal, TouchableWithoutFeedback } from 'react-native'
 
+import moment from 'moment'
+import LottieView from 'lottie-react-native'
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 import { LinearGradient } from 'expo-linear-gradient'
 
 import { changePhoto } from '../stores/actions'
 
+import db from '../services/firebase'
 import Loader from '../components/loader'
 import * as theme from '../constats/theme'
 import { Block, Text } from '../components'
@@ -18,6 +21,20 @@ const Logs = (props) => {
   const user  = useSelector(state => state.user)
   const [modalVisible, setModalVisible] = useState(false)
   const [changed, setChanged] = useState(false)
+  const [showDetail, setShowDetail] = useState(false)
+  const [isLogs, setIsLogs] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    db.collection('machines').doc('machine-1').onSnapshot(querySnapshot => {
+      setIsLogs(querySnapshot.data().logs.reverse())
+    })
+  }, [])
+
+  useEffect(() => {
+    console.log(isLogs);
+  }, [isLogs])
+
 
   const styles = StyleSheet.create({
     container: {
@@ -81,11 +98,18 @@ const Logs = (props) => {
         let ext = result.uri.split('.')[1]
         const image = `data:image/${ext};base64,${result.base64}`
         dispatch(changePhoto(image, user.token))
-        setChanged(true)
+        setChanged(user.isLoading)
       }
     }
   }
  
+  const handlePressIn = () => {
+    console.log('masuk')
+  }
+
+  const handlePressOut = () => {
+    console.log('keluar')
+  }
 
   return (
     <Block>
@@ -94,7 +118,7 @@ const Logs = (props) => {
         <Text h1 bold> Hey {user.fullname}! </Text>
           <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Image 
-              source={require('../../assets/images/avatar_1x.jpg')}
+              source={{uri: user.photo_path}}
               style={{ width: 50, height: 50, borderRadius: 20 }}
             />
           </TouchableOpacity>
@@ -112,8 +136,18 @@ const Logs = (props) => {
       <Block style={styles.container}> 
         <ScrollView style={{backgroundColor: '#f9f6ea'}}>
           <Text h3 semibold center> History </Text>
+          { isLogs ? null : (
+            <Block center middle>
+              <LottieView 
+                source={require('../../assets/loading-2.json')}
+                autoPlay
+                loop
+                style={{width: 100, height: 100}}
+              />
+            </Block>
+          ) }
           <FlatList 
-            data={props.logs}
+            data={isLogs}
             keyExtractor={(item, index) => String(index)}
             style={{marginVertical: 20}}
             pagingEnabled
@@ -123,12 +157,14 @@ const Logs = (props) => {
             renderItem={({item, index}) => (
               <Block row key={index} style={styles.card} >
                 <Block middle style={{alignItems: 'flex-end', borderRightWidth: 1, borderRightColor: theme.colors.gray2 ,paddingHorizontal: 15}}>
-                  <Text gray> {item.time} </Text>
+                  <Text gray> {moment(new Date(item.toDate())).format('kk.mm')} </Text>
                 </Block>
-                <Block middle style={{paddingHorizontal: 15}}>
-                  <Text semibold body> Feeding Food </Text>
-                  <Text gray> {item.date} </Text>
-                </Block>
+                <TouchableWithoutFeedback>
+                  <Block middle style={{paddingHorizontal: 15}}>
+                    <Text semibold body> Feeding Food </Text>
+                    <Text gray> {moment(item.toDate()).fromNow()} </Text>
+                  </Block>
+                </TouchableWithoutFeedback>
               </Block>
             )}
           />
@@ -143,7 +179,7 @@ const Logs = (props) => {
           <Block flex={false} style={styles.wrapper}>
             <Block center middle>
               <Image 
-                source={require('../../assets/images/avatar_1x.jpg')}
+                source={{uri: user.photo_path}}
                 style={{width: 100, height: 100, borderRadius: 20, marginBottom: 5}}
               />
               <TouchableOpacity onPress={() => handleChangePhoto()}>
@@ -165,77 +201,89 @@ const mock = [
   {
     id: 1,
     time: '02.00',
-    date: '2 day ago'
+    created_at: new Date()
   },
   {
     id: 2,
     time: '04.00',
-    date: '2 day ago'
+    created_at: new Date('2019-09-10')
   },
   {
     id: 3,
     time: '05.00',
-    date: '2 day ago'
+    created_at: new Date('2019-09-12')
   },
   {
     id: 4,
     time: '02.00',
-    date: '3 day ago'
+    date: '3 day ago',
+    created_at: new Date('2019-09-13')
   },
   {
     id: 5,
     time: '02.00',
-    date: '4 day ago'
+    date: '4 day ago',
+    created_at: new Date('2019-08-10')
   },
   {
     id: 6,
     time: '02.00',
-    date: '10 day ago'
+    date: '10 day ago',
+    created_at: new Date('2019-08-22')
   },
   {
     id: 7,
     time: '02.00',
-    date: '12 day ago'
+    date: '12 day ago',
+    created_at: new Date('2019-09-13')
   },
   {
     id: 8,
     time: '12.02',
-    date: '12 day ago'
+    date: '12 day ago',
+    created_at: new Date('2019-09-01')
   },
   {
     id: 9,
     time: '15.01',
-    date: '12 day ago'
+    date: '12 day ago',
+    created_at: new Date('2019-09-02')
   },
   {
     id: 10,
     time: '12.12',
-    date: '12 day ago'
+    date: '12 day ago',
+    created_at: new Date('2019-09-03')
   },
   {
     id: 11,
     time: '00.00',
-    date: '13 day ago'
+    date: '13 day ago',
+    created_at: new Date('2019-09-04')
   },
   {
     id: 12,
     time: '16.32',
-    date: '13 day ago'
+    date: '13 day ago',
+    created_at: new Date('2019-09-05')
   },
   {
     id: 13,
     time: '19.00',
-    date: '13 day ago'
+    date: '13 day ago',
+    created_at: new Date('2019-09-06')
   },
   {
     id: 14,
     time: '18.00',
-    date: '14 day ago'
+    date: '14 day ago',
+    created_at: new Date('2019-09-07')
   },
   {
     id: 15,
     time: '09.43',
-    date: '15 day ago'
+    date: '15 day ago',
+    created_at: new Date('2019-09-08')
   }
 ]
 

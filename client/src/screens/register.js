@@ -78,7 +78,6 @@ const Register = (props) => {
               autoComplete="off"
               autoCapitalize="none"
               autoCorrect={false}
-              autoFocus={true}
               keyboardType='email-address'
               value={fullName}
               onChangeText={(text) => setFullName(text)}

@@ -5,7 +5,7 @@ import { TapGestureHandler } from 'react-native-gesture-handler'
 
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Icon from 'react-native-vector-icons/Ionicons'
-import Animated, { Easing } from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 import Loader from '../components/loader'
 
 import { signIn, checkerLogin, removeErrorUser } from '../stores/actions'
@@ -103,11 +103,6 @@ const WelcomeScreen = (props) => {
     setPassword('')
   }
 
-  function Toasterr () {
-    toast.show("hello")
-    console.log("masuk error")
-  }
-
   return (
     <Block end style={{backgroundColor: theme.colors.white}}>
       <Loader modalVisible={user.isLoading}/>
@@ -136,13 +131,13 @@ const WelcomeScreen = (props) => {
         }
       />
       <Block flex={false} style={{height: height / 4}}> 
-        <TapGestureHandler onHandlerStateChange={(a) =>  setOpacity(0) }>
+        <TouchableOpacity onPress={(a) =>  setOpacity(0) }>
           <Animated.View 
             style={{ ...styles.btn, backgroundColor: theme.colors.accent, opacity: buttonOpacity, transform: [{translateY: btnY}] }}
           >
             <Text semibold> Sign In </Text>
           </Animated.View>
-        </TapGestureHandler>
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => props.navigation.navigate('SlideFromBottom')}>
           <Animated.View 
             style={{ ...styles.btn, backgroundColor: 'whitesmoke', opacity: buttonOpacity, transform: [{translateY: btnY}] }}
@@ -154,7 +149,7 @@ const WelcomeScreen = (props) => {
           style={{
             zIndex: zindex,
             opacity: inputOpacity,
-            transform: [{translateY: inputY}],
+            // transform: [{translateY: inputY}],
             ...StyleSheet.absoluteFill, 
             height: height / 4,
             top: null,
@@ -175,7 +170,6 @@ const WelcomeScreen = (props) => {
             autoComplete="off"
             autoCapitalize="none"
             autoCorrect={false}
-            autoFocus={true}
             keyboardType='email-address'
             value={email}
             onChangeText={(text) => {
