@@ -7,6 +7,7 @@ const app = express();
 const PORT = process.env.PORT;
 const MONGODB_URL = process.env.MONGODB_URL;
 const userRoutes = require('./routes/rUser');
+const tokenRoutes = require('./routes/rToken');
 const machineRoutes = require('./routes/rMachine');
 const errorHandler = require('./helpers/errorHandler');
 // Using Middleware 
@@ -20,6 +21,7 @@ mongoose.connect(MONGODB_URL, {useNewUrlParser: true, useUnifiedTopology: true, 
 //Routing
 app.use('/user', userRoutes)
 app.use('/machine', machineRoutes)
+app.use('/token',tokenRoutes)
 app.use(errorHandler)
 app.listen(PORT, function(){
     console.log('CONNECTED TO PORT '+PORT)
