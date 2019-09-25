@@ -68,7 +68,6 @@ export const changePhoto = (base64Image, token) => {
         dispatch({type: 'SET_LOADING_USER', payload: true})
         ax.post('user/changephoto', {photo : base64Image}, {headers: {token}})
             .then(({ data }) => {
-                console.log(data.photo_path);
                 dispatch({type:'SET_PHOTO_USER', payload: data.photo_path })
                 dispatch({type: 'SET_LOADING_USER', payload: false})
             })

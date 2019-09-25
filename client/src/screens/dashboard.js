@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, Dimensions, Image, AsyncStorage } from 'react-native'
 
+import { Notifications } from 'expo'
+import * as Permissions from 'expo-permissions';
 import * as Animatable from 'react-native-animatable';
 import { Bar } from 'react-native-progress';
 
@@ -34,6 +36,39 @@ const Dashboard = (props) => {
       else setChecked(false)
     })
   },[])
+
+  useEffect(() => {
+    registerForPushNotifications()
+  },[])
+
+  const registerForPushNotifications = async () => {
+    const { status: existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+    // only ask if permissions have not already been determined, because
+    // iOS won't necessarily prompt the user a second time.
+    if (existingStatus !== 'granted') {
+      // Android remote notification permissions are granted during the app
+      // install, so this will only ask on iOS
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS)
+      finalStatus = status;
+    }
+    console.log(finalStatus)
+    // Stop here if the user did not grant permissions
+    if (finalStatus !== 'granted') {
+      console.log('ui');
+      return;
+    }
+    const listener =  Notifications.addListener(handleNotif)
+    // Get the token that uniquely identifies this device
+    let token = await Notifications.getExpoPushTokenAsync();
+    console.log(token)
+  }
+
+  const handleNotif = (({origin , data}) => {
+    console.log(origin, data)
+  })
 
   const styles = StyleSheet.create({
     header: {
@@ -78,13 +113,6 @@ const Dashboard = (props) => {
     }
   })
 
-  useEffect(() => {
-    animate()
-    // AsyncStorage.getItem('user', (err, result) => {
-    //   console.log(result);
-    // });
-  }, [])
-
   const animate = () => {
     setTimeout(() => {
       setFoodInt(false)
@@ -92,7 +120,7 @@ const Dashboard = (props) => {
   }
 
   useEffect(() => {
-    setWidthFood(1-(food/30))
+    setWidthFood(1-(food/16))
   },[food])
 
   useEffect(() => {
@@ -137,7 +165,7 @@ const Dashboard = (props) => {
           ) : (
             <Image 
               source={require('../../assets/images/chicken.png')}
-              style={{width: width/2.2, height: height/2.2}}
+              style={{width: width/2.2, height: height/2.2, }}
             />
           ) }
         </Block>
@@ -148,7 +176,7 @@ const Dashboard = (props) => {
               style={{width: 22, height: 22}}
             />
             <Block flex={false}>
-              <Text center small> {((1-food/30) * 100).toFixed()}% </Text>
+              <Text center small> {((1-food/16) * 100).toFixed()}% </Text>
               <Bar 
                 style={styles.progressBar}
                 width= {widthh}
@@ -195,7 +223,7 @@ const Dashboard = (props) => {
               <Text center small> {suhu}°C </Text>
               <Bar 
                 style={styles.progressBar}
-                progress={(suhu/100)}
+                progress={(suhu/40)}
                 width= {widthh}
                 height= {heightt}
                 indeterminate={false}
