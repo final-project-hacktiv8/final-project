@@ -6,7 +6,6 @@ const storage = new Storage.Storage({
 })
 
 
-console.log(CLOUD_BUCKET)
 const bucket = storage.bucket(CLOUD_BUCKET);
 
 const getPublicUrl = (filename) => {

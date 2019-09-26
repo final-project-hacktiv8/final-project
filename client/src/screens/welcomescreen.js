@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { StyleSheet, Image, Dimensions, TextInput, TouchableOpacity } from 'react-native'
 <<<<<<< HEAD
 import { State, TapGestureHandler } from 'react-native-gesture-handler'
@@ -13,6 +14,10 @@ import Toast, {DURATION} from 'react-native-easy-toast'
 import { StyleSheet, Image, Dimensions, TextInput, TouchableOpacity, AsyncStorage } from 'react-native'
 import { TapGestureHandler } from 'react-native-gesture-handler'
 >>>>>>> 66ad8ffd... i guess is done
+=======
+import { StyleSheet, Image, Dimensions, TextInput, TouchableOpacity, AsyncStorage } from 'react-native'
+import { TapGestureHandler } from 'react-native-gesture-handler'
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
 
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -31,6 +36,7 @@ const WelcomeScreen = (props) => {
   const dispatch = useDispatch()
   const [show, setShow] = useState(true)
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [isLoading, setIsLoading] = useState(false)
   const buttonOpacity = new Value(1)
 
@@ -48,13 +54,32 @@ const WelcomeScreen = (props) => {
       ])
     }
   ])
+=======
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const user = useSelector(state => state.user)
+  const [buttonOpacity, setOpacity] = useState(1)
+  const [showAlert, setShowAlert] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  const onClose = event([
-    {
-      nativeEvent: ({state}) => block([
-        cond(eq(state, State.END), set(buttonOpacity, runTiming(new Clock, 0, 1)))
-      ])
+  useEffect(() => {
+    AsyncStorage.getItem('user', (error, result) => {
+      if (result) {
+         let resultParsed = JSON.parse(result)
+         dispatch(checkerLogin(resultParsed, props.navigation))
+      }
+    });
+  },[])
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
+
+  useEffect(() => {
+    if(user.isError) {
+      setErrorMessage(user.isError)
+      setShowAlert(true)
+    } else {
+      setShowAlert(false)
     }
+<<<<<<< HEAD
   ])
 
   function runTiming(clock, value, dest) {
@@ -115,6 +140,9 @@ const WelcomeScreen = (props) => {
     }
   },[user.isError])
 >>>>>>> 66ad8ffd... i guess is done
+=======
+  },[user.isError])
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
 
   const btnY = interpolate(buttonOpacity, { inputRange: [0, 1], outputRange: [100, 0], extrapolate: Extrapolate.CLAMP }) 
   const bgY = interpolate(buttonOpacity, { inputRange: [0, 1], outputRange: [-height / 4, 0], extrapolate: Extrapolate.CLAMP }) 
@@ -205,6 +233,7 @@ const WelcomeScreen = (props) => {
       <Block flex={false} style={{height: height / 4}}> 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <TapGestureHandler onHandlerStateChange={() => snackbar()}>
 =======
         <TapGestureHandler onHandlerStateChange={(a) =>  setOpacity(0) }>
@@ -212,6 +241,9 @@ const WelcomeScreen = (props) => {
 =======
         <TouchableOpacity onPress={(a) =>  setOpacity(0) }>
 >>>>>>> 55b17af1... so closeeee
+=======
+        <TouchableOpacity onPress={(a) =>  setOpacity(0) }>
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
           <Animated.View 
             style={{ ...styles.btn, backgroundColor: theme.colors.accent, opacity: buttonOpacity, transform: [{translateY: btnY}] }}
           >

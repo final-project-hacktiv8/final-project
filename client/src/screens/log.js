@@ -32,7 +32,11 @@ const Logs = (props) => {
   }, [])
 
   useEffect(() => {
+<<<<<<< HEAD
     console.log(isLogs);
+=======
+    
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
   }, [isLogs])
 
 
@@ -102,6 +106,7 @@ const Logs = (props) => {
       }
     }
   }
+<<<<<<< HEAD
  
   const handlePressIn = () => {
     console.log('masuk')
@@ -110,6 +115,8 @@ const Logs = (props) => {
   const handlePressOut = () => {
     console.log('keluar')
   }
+=======
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
 
   return (
     <Block>
@@ -188,6 +195,10 @@ const Logs = (props) => {
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Text small style={{color: '#0000EE'}}> Done </Text>
               </TouchableOpacity>
+<<<<<<< HEAD
+=======
+              { user.isError ? <Text small style={{backgroundColor: 'red'}}> *{user.isError} </Text> : null }
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
             </Block>
           </Block>
         </Block>

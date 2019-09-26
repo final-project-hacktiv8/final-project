@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, Dimensions, Image, AsyncStorage } from 'react-native'
+<<<<<<< HEAD
 import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions'
+=======
+import { useSelector } from 'react-redux'
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
 
 import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions';
@@ -14,6 +18,7 @@ import { Block, Text } from '../components'
 
 const Dashboard = (props) => {
 
+  const user = useSelector(state => state.user)
   const { width, height } = Dimensions.get('screen')
   const [food, setFood] = useState(1)
   const [foodInt, setFoodInt] = useState(false)
@@ -22,7 +27,10 @@ const Dashboard = (props) => {
   const [suhu, setSuhu] =useState(null)
   const [checked, setChecked] = useState(false)
   const [motor, setMotor] = useState(null)
+<<<<<<< HEAD
   const [notif, setNotif] = useState('');
+=======
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
   const widthh = 120
   const heightt = 6
 
@@ -40,6 +48,10 @@ const Dashboard = (props) => {
   },[])
 
   useEffect(() => {
+<<<<<<< HEAD
+=======
+    console.log(user)
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
     registerForPushNotifications()
   },[])
 
@@ -152,7 +164,11 @@ const Dashboard = (props) => {
     <Block style={{ backgroundColor: '#f9f6ea' }}>
       <Block flex={false} row center style={styles.header}>
         <Text h1 bold> Magic Livestock </Text>
+<<<<<<< HEAD
         <Animatable.Image animation='tada' delay={600} style={styles.avatar} source={require('../../assets/images/avatar_1x.jpg')}/> 
+=======
+        <Animatable.Image animation='tada' delay={600} style={styles.avatar} source={{uri: user.photo_path}}/> 
+>>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
       </Block>
       <Block flex={false} row center style={{justifyContent: 'space-between', marginVertical: 10, paddingHorizontal: theme.sizes.base}}>
         <Block>
