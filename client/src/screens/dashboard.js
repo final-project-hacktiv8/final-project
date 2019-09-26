@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, Dimensions, Image, AsyncStorage } from 'react-native'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions'
 =======
 import { useSelector } from 'react-redux'
 >>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
+=======
+import { Notifications } from 'expo'
+import * as Permissions from 'expo-permissions'
+>>>>>>> f4c32205... fix
 
 import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions';
@@ -28,9 +33,13 @@ const Dashboard = (props) => {
   const [checked, setChecked] = useState(false)
   const [motor, setMotor] = useState(null)
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [notif, setNotif] = useState('');
 =======
 >>>>>>> dee388e6cd2b657d13dcc4fe6aac03685a05d107
+=======
+  const [notif, setNotif] = useState('');
+>>>>>>> f4c32205... fix
   const widthh = 120
   const heightt = 6
 
