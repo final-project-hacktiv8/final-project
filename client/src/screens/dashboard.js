@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, Dimensions, Image, AsyncStorage } from 'react-native'
+import { Notifications } from 'expo'
+import * as Permissions from 'expo-permissions'
 
 import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions';
@@ -9,7 +11,6 @@ import { Bar } from 'react-native-progress';
 import db from '../services/firebase'
 import * as theme from '../constats/theme'
 import { Block, Text } from '../components'
-
 
 const Dashboard = (props) => {
 
@@ -21,6 +22,7 @@ const Dashboard = (props) => {
   const [suhu, setSuhu] =useState(null)
   const [checked, setChecked] = useState(false)
   const [motor, setMotor] = useState(null)
+  const [notif, setNotif] = useState('');
   const widthh = 120
   const heightt = 6
 
