@@ -68,9 +68,16 @@ export const changePhoto = (base64Image, token) => {
         dispatch({type: 'SET_LOADING_USER', payload: true})
         ax.post('user/changephoto', {photo : base64Image}, {headers: {token}})
             .then(({ data }) => {
-                dispatch({type:'SET_PHOTO_USER', payload: data.photo_path })
-                dispatch({type: 'SET_LOADING_USER', payload: false})
+                AsyncStorage.getItem('user', (error, result) => {
+                    if (result) {
+                       let resultParsed = JSON.parse(result)
+                       AsyncStorage.setItem('user', JSON.stringify({...resultParsed, photo_path: data.photo_path}), () => {
+                        dispatch({type:'SET_PHOTO_USER', payload: data.photo_path })
+                        dispatch({type: 'SET_LOADING_USER', payload: false})
+                    })
+                }
             })
+        })
             .catch(err => {
                 console.log(err.response.data.message);
                 dispatch({type: 'SET_ERROR_USER', payload: err.response.data.message})

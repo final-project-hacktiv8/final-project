@@ -32,7 +32,7 @@ const Logs = (props) => {
   }, [])
 
   useEffect(() => {
-    console.log(isLogs);
+    
   }, [isLogs])
 
 
@@ -101,14 +101,6 @@ const Logs = (props) => {
         setChanged(user.isLoading)
       }
     }
-  }
- 
-  const handlePressIn = () => {
-    console.log('masuk')
-  }
-
-  const handlePressOut = () => {
-    console.log('keluar')
   }
 
   return (
@@ -188,6 +180,7 @@ const Logs = (props) => {
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Text small style={{color: '#0000EE'}}> Done </Text>
               </TouchableOpacity>
+              { user.isError ? <Text small style={{backgroundColor: 'red'}}> *{user.isError} </Text> : null }
             </Block>
           </Block>
         </Block>

@@ -20,6 +20,7 @@ const userReducer = (state = initState, action) => {
         token: action.payload.token
       }
     case 'SET_LOADING_USER': 
+    console.log(action.payload)
       return {
         ...state,
         isLoading: action.payload

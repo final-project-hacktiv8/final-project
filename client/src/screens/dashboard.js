@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, Dimensions, Image, AsyncStorage } from 'react-native'
+import { useSelector } from 'react-redux'
 
 import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions';
@@ -13,6 +14,7 @@ import { Block, Text } from '../components'
 
 const Dashboard = (props) => {
 
+  const user = useSelector(state => state.user)
   const { width, height } = Dimensions.get('screen')
   const [food, setFood] = useState(1)
   const [foodInt, setFoodInt] = useState(false)
@@ -38,6 +40,7 @@ const Dashboard = (props) => {
   },[])
 
   useEffect(() => {
+    console.log(user)
     registerForPushNotifications()
   },[])
 
@@ -150,7 +153,7 @@ const Dashboard = (props) => {
     <Block style={{ backgroundColor: '#f9f6ea' }}>
       <Block flex={false} row center style={styles.header}>
         <Text h1 bold> Magic Livestock </Text>
-        <Animatable.Image animation='tada' delay={600} style={styles.avatar} source={require('../../assets/images/avatar_1x.jpg')}/> 
+        <Animatable.Image animation='tada' delay={600} style={styles.avatar} source={{uri: user.photo_path}}/> 
       </Block>
       <Block flex={false} row center style={{justifyContent: 'space-between', marginVertical: 10, paddingHorizontal: theme.sizes.base}}>
         <Block>
